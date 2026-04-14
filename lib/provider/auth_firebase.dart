@@ -23,10 +23,11 @@ class AuthState {
     AuthStatus? status,
     String? errorMessage,
     User? user,
+    bool clearError = false,
   }) {
     return AuthState(
       status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       user: user ?? this.user,
     );
   }
@@ -45,18 +46,36 @@ class AuthFirebase extends Notifier<AuthState> {
 
   @override
   AuthState build() {
+    // Listen to auth state changes and update the state accordingly
+    _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        state = AuthState(
+          status: AuthStatus.success,
+          user: user,
+        );
+      } else if (state.status != AuthStatus.loading) {
+        state = const AuthState(
+          status: AuthStatus.idle,
+          errorMessage: null,
+          user: null,
+        );
+      }
+    });
+
     return AuthState(user: _auth.currentUser);
   }
 
   Future<void> _updateState({
     AuthStatus? status,
     String? errorMessage,
+    bool clearError = false,
   }) async {
     final currentUser = _auth.currentUser;
-    state = AuthState(
-      status: status ?? state.status,
+    state = state.copyWith(
+      status: status,
       errorMessage: errorMessage,
       user: currentUser,
+      clearError: clearError,
     );
   }
 
@@ -65,7 +84,11 @@ class AuthFirebase extends Notifier<AuthState> {
     if (state.isLoading) return;
 
     try {
-      await _updateState(status: AuthStatus.loading, errorMessage: null);
+      await _updateState(
+        status: AuthStatus.loading,
+        errorMessage: null,
+        clearError: true,
+      );
 
       await _auth.signInWithEmailAndPassword(
         email: email.trim(),
@@ -86,7 +109,11 @@ class AuthFirebase extends Notifier<AuthState> {
     if (state.isLoading) return;
 
     try {
-      await _updateState(status: AuthStatus.loading, errorMessage: null);
+      await _updateState(
+        status: AuthStatus.loading,
+        errorMessage: null,
+        clearError: true,
+      );
 
       await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
@@ -107,7 +134,11 @@ class AuthFirebase extends Notifier<AuthState> {
     if (state.isLoading) return;
 
     try {
-      await _updateState(status: AuthStatus.loading, errorMessage: null);
+      await _updateState(
+        status: AuthStatus.loading,
+        errorMessage: null,
+        clearError: true,
+      );
 
       final GoogleSignIn googleSignIn = GoogleSignIn();
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -141,7 +172,11 @@ class AuthFirebase extends Notifier<AuthState> {
     if (state.isLoading) return;
 
     try {
-      await _updateState(status: AuthStatus.loading, errorMessage: null);
+      await _updateState(
+        status: AuthStatus.loading,
+        errorMessage: null,
+        clearError: true,
+      );
 
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [

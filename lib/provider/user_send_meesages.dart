@@ -24,12 +24,27 @@ class ChatViewModel extends StateNotifier<ChatState> {
 
   Future<void> sendMessage(String text) async {
     state = ChatState(isLoading: true); // Set loading
-    
+
     try {
       final dio = ref.read(dioProvider);
-      final res = await dio.post('/send', data: {'message': text});
+      final res = await dio.post('/api/chat', data: {
+        'message': text,
+        'model': 'qwen-plus',
+      });
+
+      // Extract response from the Qwen API
+      final responseData = res.data;
+      String? responseText;
       
-      state = ChatState(isLoading: false, response: res.data['status'] ?? res.data['response']);
+      if (responseData is Map) {
+        responseText = responseData['response'] ?? 
+                       responseData['message'] ?? 
+                       responseData.toString();
+      } else {
+        responseText = responseData?.toString() ?? 'No response';
+      }
+
+      state = ChatState(isLoading: false, response: responseText);
     } catch (e) {
       state = ChatState(isLoading: false, response: 'Error: $e');
     }

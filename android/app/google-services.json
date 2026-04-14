@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1059528997074",
+    "project_id": "dietlog-2afef",
+    "storage_bucket": "dietlog-2afef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059528997074:android:14a9604f7cbae8b65c150b",
+        "android_client_info": {
+          "package_name": "com.example.bitelog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAErWX5RqwH82M5FkRMNW4zl285gEtrr1M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

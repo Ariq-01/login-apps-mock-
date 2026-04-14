@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/home/home_page.dart';
-import 'features/login/login_page.dart';
+import 'features/login/login.dart';
 import 'provider/auth_firebase.dart';
 
 void main() {
